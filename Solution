@@ -1,0 +1,87 @@
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Collections.Generic;
+using System.Collections;
+using System.Text.RegularExpressions;
+
+namespace AssociativeArrays
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string regex = @"[STARstar]{1}";
+
+            string pattern = @"@([A-z]{1,})([^@\-!:>]*?):([-+]?[0-9]*\.?[0-9]*)([^@\-!:>]*?)!([A,D])!([^@\-!:>]*?)([^@\-!:>]*?)->([-+]?[0-9]*\.?[0-9]*)([^@\-!:>]*?)";
+
+            int iterations = int.Parse(Console.ReadLine());
+
+            StringBuilder decrypted = new StringBuilder();
+            List<string> A = new List<string>();
+            List<string> D = new List<string>();
+
+            char current = 'a';
+
+            int count = 0;
+
+            for (int i = 0; i < iterations; i++)
+            {
+                string input = Console.ReadLine();
+
+                MatchCollection counts = Regex.Matches(input, regex);
+
+                count = int.Parse(counts.Count.ToString());
+
+                for (int j = 0; j < input.Length; j++)
+                {
+                    current = input[j];
+                    int ch = (int)(current) - count;
+
+                    current = (char)ch;
+
+                    decrypted.Append(current);
+
+                }
+                
+
+                MatchCollection afterDecription = Regex.Matches(decrypted.ToString(), pattern);
+
+                foreach (Match item in afterDecription)
+                {
+                    string attackType = item.Groups[5].Value;
+
+                    if (attackType == "A")
+                    {
+                        A.Add(item.Groups[1].Value);
+                    }
+                    else
+                    {
+                        D.Add(item.Groups[1].Value);
+                    }
+                }
+                decrypted = new StringBuilder();
+
+            }
+
+            Console.WriteLine($"Attacked planets: {A.Count}");
+
+            A.Sort();
+
+            foreach (var item in A)
+            {
+                Console.WriteLine($"-> {item}");
+            }
+
+            Console.WriteLine($"Destroyed planets: {D.Count}");
+
+            D.Sort();
+
+            foreach (var item in D)
+            {
+                Console.WriteLine($"-> {item}");
+            }
+        }
+    }
+}
